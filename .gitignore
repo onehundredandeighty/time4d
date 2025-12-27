@@ -1,0 +1,10 @@
+.idea/
+*.iml
+.DS_Store
+out/
+**/CLAUDE.md
+/results/
+
+# FVM Version Cache
+.fvm/
+/.dart_tool/
