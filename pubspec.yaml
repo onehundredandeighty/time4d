@@ -1,5 +1,5 @@
 name: time4d
-version: 0.1.0
+version: 0.0.0
 description: Time abstraction and scheduler for Dart. Port of time4k library with deterministic scheduler for testing.
 repository: https://github.com/onehundredandeighty/time4d
 environment:
