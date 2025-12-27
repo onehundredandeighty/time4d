@@ -11,8 +11,9 @@ class DeterministicScheduler implements Scheduler {
   DeterministicScheduler([DateTime? startTime])
     : _currentTime = startTime ?? DateTime.now();
 
-  factory DeterministicScheduler.epoch() => 
-    DeterministicScheduler(DateTime.fromMillisecondsSinceEpoch(0, isUtc: true));
+  factory DeterministicScheduler.epoch() => DeterministicScheduler(
+    DateTime.fromMillisecondsSinceEpoch(0, isUtc: true),
+  );
 
   DateTime get currentTime => _currentTime;
 
@@ -91,7 +92,8 @@ class DeterministicScheduler implements Scheduler {
 
   void clear() => _tasks.clear();
 
-  bool isIdle() => _tasks.isEmpty || _tasks.first.timeToRun.isAfter(_currentTime);
+  bool isIdle() =>
+      _tasks.isEmpty || _tasks.first.timeToRun.isAfter(_currentTime);
 
   void runUntilIdle() => tick(Duration.zero);
 
