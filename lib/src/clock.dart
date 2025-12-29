@@ -1,6 +1,6 @@
 typedef Clock = DateTime Function();
 
-final Clock systemTime = DateTime.now;
+final Clock systemTime = () => DateTime.now().toUtc();
 
 Clock tickingClock(
   Clock source, {

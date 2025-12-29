@@ -4,7 +4,7 @@ import 'package:time4d/time4d.dart';
 void main() {
   group('FixedClock', () {
     test('ticked by configured amount', () {
-      final start = DateTime.now();
+      final start = DateTime.now().toUtc();
       final tick = Duration(seconds: 2);
 
       final clock = FixedClock(time: start, tick: tick);
@@ -16,7 +16,7 @@ void main() {
     });
 
     test('ticked by explicit amount', () {
-      final now = DateTime.now();
+      final now = DateTime.now().toUtc();
       final tick = Duration(seconds: 1);
 
       final fixed = FixedClock(time: now, tick: Duration(seconds: 10));
@@ -25,7 +25,7 @@ void main() {
     });
 
     test('getting the time does not progress time', () {
-      final now = DateTime.now();
+      final now = DateTime.now().toUtc();
       final tick = Duration(seconds: 1);
 
       final clock = FixedClock(time: now, tick: Duration(seconds: 10));

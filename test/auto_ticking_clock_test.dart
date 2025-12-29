@@ -4,7 +4,7 @@ import 'package:time4d/time4d.dart';
 void main() {
   group('AutoTickingClock', () {
     test('getting the time ticks by configured amount', () {
-      final start = DateTime.now();
+      final start = DateTime.now().toUtc();
       final tick = Duration(seconds: 2);
 
       final clock = AutoTickingClock(time: start, tick: tick);
@@ -15,7 +15,7 @@ void main() {
     });
 
     test('ticked by configured amount', () {
-      final now = DateTime.now();
+      final now = DateTime.now().toUtc();
       final tick = Duration(seconds: 1);
 
       final clock = AutoTickingClock(time: now, tick: tick);

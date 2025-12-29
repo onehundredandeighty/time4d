@@ -14,7 +14,7 @@ class FixedClock implements TickableClock {
   final Duration _defaultTick;
 
   FixedClock({DateTime? time, Duration tick = const Duration(seconds: 1)})
-    : _current = time ?? epoch,
+    : _current = (time ?? epoch).toUtc(),
       _defaultTick = tick {
     if (tick.isNegative) {
       throw ArgumentError('Time can only tick forwards, not by $tick');
@@ -30,7 +30,7 @@ class FixedClock implements TickableClock {
     if (tickAmount.isNegative) {
       throw ArgumentError('Time can only tick forwards, not by $tickAmount');
     }
-    _current = _current.add(tickAmount);
+    _current = _current.add(tickAmount).toUtc();
     return this;
   }
 }
