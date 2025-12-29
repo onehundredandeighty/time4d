@@ -31,8 +31,8 @@ dev_dependencies:
 ```dart
 import 'package:time4d/time4d.dart';
 
-// Basic Clock
-final clock = systemTime;
+// Basic UTC Clock
+final clock = utcSystemTime;
 print('Current time: ${clock()}');
 
 // Deterministic testing
@@ -51,10 +51,10 @@ A `Clock` is simply a function that returns the current time:
 typedef Clock = DateTime Function();
 
 // System time
-final systemClock = systemTime; // Uses DateTime.now
+final systemClock = utcSystemTime; // Uses DateTime.now.toUtc
 
 // Ticking clock (truncates to specified unit)
-final secondClock = tickingClock(systemTime, unit: Duration(seconds: 1));
+final secondClock = tickingClock(utcSystemTime, unit: Duration(seconds: 1));
 ```
 
 ### Test Time Sources
@@ -151,6 +151,42 @@ class DeterministicScheduler implements Scheduler {
 ```
 
 
+## Working with UTC Times
+
+Time4d operates exclusively with UTC `DateTime` objects. All clocks return UTC times for deterministic testing and cross-platform consistency.
+
+```dart
+final clock = utcSystemTime;
+print(clock().isUtc); // true
+
+final fixed = FixedClock();
+print(fixed().isUtc); // true
+```
+
+### Converting to Local Time
+
+For user-facing displays, convert UTC times at the presentation layer:
+
+```dart
+final utcTime = utcSystemTime();
+final localTime = utcTime.toLocal();
+
+print('UTC: $utcTime');     // 2024-01-15 14:30:00.000Z
+print('Local: $localTime'); // 2024-01-15 09:30:00.000 (EST example)
+```
+
+### Architecture Pattern
+
+A clean approach is to keep business logic in UTC and convert at the edges:
+
+```dart
+// Core logic stays in UTC
+DateTime scheduleTask(Duration delay) => utcSystemTime().add(delay);
+
+// UI layer handles conversion
+String displayTime(DateTime utc) => utc.toLocal().toString();
+```
+
 ## Best Practices
 
 1. **Use factory constructors**: `DeterministicScheduler.epoch()` for tests
@@ -158,6 +194,7 @@ class DeterministicScheduler implements Scheduler {
 3. **Clean shutdown**: Always call `shutdown()` on production schedulers
 4. **Test time control**: Use `tick()` and `runUntilIdle()` to control test execution
 5. **Avoid real time in tests**: Use `DeterministicScheduler` instead of `SchedulerService`
+6. **Keep UTC in business logic**: Convert to local timezone only at the presentation layer
 
 ## Examples
 

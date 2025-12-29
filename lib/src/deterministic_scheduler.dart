@@ -8,9 +8,12 @@ class DeterministicScheduler implements Scheduler {
   bool _isShutdown = false;
   final List<_ScheduleTask> _tasks = <_ScheduleTask>[];
 
-  DeterministicScheduler([DateTime? startTime]) : _currentTime = startTime ?? DateTime.now();
+  DeterministicScheduler([DateTime? startTime])
+    : _currentTime = startTime ?? DateTime.now();
 
-  factory DeterministicScheduler.epoch() => DeterministicScheduler(DateTime.fromMillisecondsSinceEpoch(0, isUtc: true));
+  factory DeterministicScheduler.epoch() => DeterministicScheduler(
+    DateTime.fromMillisecondsSinceEpoch(0, isUtc: true),
+  );
 
   DateTime get currentTime => _currentTime;
 
@@ -18,10 +21,12 @@ class DeterministicScheduler implements Scheduler {
   bool get isShutdown => _isShutdown;
 
   @override
-  Future<T> submit<T>(Future<T> Function() task) => schedule(task, Duration.zero);
+  Future<T> submit<T>(Future<T> Function() task) =>
+      schedule(task, Duration.zero);
 
   @override
-  Future<void> submitVoid(void Function() task) => scheduleVoid(task, Duration.zero);
+  Future<void> submitVoid(void Function() task) =>
+      scheduleVoid(task, Duration.zero);
 
   @override
   Future<T> schedule<T>(Future<T> Function() callable, Duration delay) {
@@ -31,13 +36,18 @@ class DeterministicScheduler implements Scheduler {
   }
 
   @override
-  Future<void> scheduleVoid(void Function() task, Duration delay) => schedule(() {
-    task();
-    return Future<void>.value();
-  }, delay);
+  Future<void> scheduleVoid(void Function() task, Duration delay) =>
+      schedule(() {
+        task();
+        return Future<void>.value();
+      }, delay);
 
   @override
-  Future<void> scheduleWithFixedDelay(void Function() task, Duration initialDelay, Duration delay) {
+  Future<void> scheduleWithFixedDelay(
+    void Function() task,
+    Duration initialDelay,
+    Duration delay,
+  ) {
     final scheduleTask = _ScheduleTask<void>(
       () {
         task();
@@ -51,7 +61,11 @@ class DeterministicScheduler implements Scheduler {
   }
 
   @override
-  Future<void> scheduleAtFixedRate(void Function() task, Duration initialDelay, Duration period) {
+  Future<void> scheduleAtFixedRate(
+    void Function() task,
+    Duration initialDelay,
+    Duration period,
+  ) {
     final scheduleTask = _ScheduleTask<void>(
       () {
         task();
@@ -78,7 +92,8 @@ class DeterministicScheduler implements Scheduler {
 
   void clear() => _tasks.clear();
 
-  bool isIdle() => _tasks.isEmpty || _tasks.first.timeToRun.isAfter(_currentTime);
+  bool isIdle() =>
+      _tasks.isEmpty || _tasks.first.timeToRun.isAfter(_currentTime);
 
   void runUntilIdle() => tick(Duration.zero);
 
@@ -131,9 +146,13 @@ class _ScheduleTask<T> implements Comparable<_ScheduleTask> {
   bool _isCancelled = false;
   final Completer<T> _completer = Completer<T>();
 
-  _ScheduleTask(this._callable, this.timeToRun, {Duration? period, Duration? delay})
-    : _period = period,
-      _delay = delay {
+  _ScheduleTask(
+    this._callable,
+    this.timeToRun, {
+    Duration? period,
+    Duration? delay,
+  }) : _period = period,
+       _delay = delay {
     if (period != null && period.isNegative) {
       throw ArgumentError('period/rate must be > 0');
     }
@@ -159,7 +178,9 @@ class _ScheduleTask<T> implements Comparable<_ScheduleTask> {
     if (_isCancelled) return false;
 
     try {
-      _callable().then(_completer.complete).catchError(_completer.completeError);
+      _callable()
+          .then(_completer.complete)
+          .catchError(_completer.completeError);
       return true;
     } catch (e, stackTrace) {
       _completer.completeError(e, stackTrace);
@@ -170,7 +191,12 @@ class _ScheduleTask<T> implements Comparable<_ScheduleTask> {
   _ScheduleTask<T> atNextExecutionTimeAfter(DateTime clock) {
     final nextTime = _delay != null ? clock.add(_delay) : clock.add(_period!);
 
-    return _ScheduleTask<T>(_callable, nextTime, period: _period, delay: _delay);
+    return _ScheduleTask<T>(
+      _callable,
+      nextTime,
+      period: _period,
+      delay: _delay,
+    );
   }
 
   @override

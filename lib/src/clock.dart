@@ -1,7 +1,21 @@
 typedef Clock = DateTime Function();
 
-final Clock systemTime = () => DateTime.now().toUtc();
+/// System clock that returns the current time in UTC.
+/// 
+/// This clock uses [DateTime.now] internally but converts to UTC to ensure
+/// consistent behavior across different timezones and environments.
+final Clock utcSystemTime = () => DateTime.now().toUtc();
 
+/// Creates a clock that truncates time to the specified unit.
+/// 
+/// The returned clock will truncate the time from [source] to the nearest
+/// [unit] boundary. For example, with `unit: Duration(seconds: 1)`, the
+/// clock will truncate to the nearest second.
+/// 
+/// Example:
+/// ```dart
+/// final secondClock = tickingClock(utcSystemTime, unit: Duration(seconds: 1));
+/// ```
 Clock tickingClock(
   Clock source, {
   Duration unit = const Duration(seconds: 1),
