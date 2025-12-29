@@ -9,17 +9,17 @@ abstract class TickableClock {
 }
 
 /// A clock with fixed time that only advances when manually ticked.
-/// 
+///
 /// This clock is ideal for deterministic testing where you need precise
 /// control over time progression. All returned times are in UTC.
-/// 
+///
 /// Example:
 /// ```dart
 /// final clock = FixedClock(
 ///   time: DateTime.fromMillisecondsSinceEpoch(0, isUtc: true),
 ///   tick: Duration(seconds: 1),
 /// );
-/// 
+///
 /// print(clock()); // 1970-01-01 00:00:00.000Z
 /// clock.tick();
 /// print(clock()); // 1970-01-01 00:00:01.000Z
@@ -35,7 +35,7 @@ class FixedClock implements TickableClock {
   final Duration _defaultTick;
 
   /// Creates a fixed clock with optional starting time and tick duration.
-  /// 
+  ///
   /// - [time]: Starting time (defaults to Unix epoch). Automatically converted to UTC.
   /// - [tick]: Default duration to advance when [tick] is called without parameters.
   FixedClock({DateTime? time, Duration tick = const Duration(seconds: 1)})
@@ -61,18 +61,18 @@ class FixedClock implements TickableClock {
 }
 
 /// A clock that automatically advances each time it is called.
-/// 
+///
 /// This clock wraps another [TickableClock] and automatically ticks it
 /// forward by the configured amount every time the time is retrieved.
 /// All returned times are in UTC.
-/// 
+///
 /// Example:
 /// ```dart
 /// final clock = AutoTickingClock(
 ///   time: DateTime.fromMillisecondsSinceEpoch(0, isUtc: true),
 ///   tick: Duration(seconds: 2),
 /// );
-/// 
+///
 /// print(clock()); // 1970-01-01 00:00:00.000Z
 /// print(clock()); // 1970-01-01 00:00:02.000Z (auto-advanced)
 /// ```
@@ -80,7 +80,7 @@ class AutoTickingClock implements TickableClock {
   final TickableClock _underlying;
 
   /// Creates an auto-ticking clock with optional starting time and tick duration.
-  /// 
+  ///
   /// - [time]: Starting time (defaults to Unix epoch). Automatically converted to UTC.
   /// - [tick]: Duration to advance automatically on each call.
   AutoTickingClock({DateTime? time, Duration tick = const Duration(seconds: 1)})

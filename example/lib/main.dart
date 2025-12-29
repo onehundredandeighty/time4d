@@ -5,8 +5,11 @@ void main() async {
 
   // Basic time sources - All times are UTC for consistency
   print('1. Basic Clock:');
-  final systemClock = utcSystemTime; // Returns UTC time for deterministic behavior
-  print('System time: ${systemClock()}'); // Notice the "Z" suffix indicating UTC
+  final systemClock =
+      utcSystemTime; // Returns UTC time for deterministic behavior
+  print(
+    'System time: ${systemClock()}',
+  ); // Notice the "Z" suffix indicating UTC
 
   final ticking = tickingClock(utcSystemTime, unit: Duration(seconds: 1));
   print('Ticking time (truncated to seconds): ${ticking()}'); // Also UTC
@@ -14,7 +17,10 @@ void main() async {
   // Test time sources - Explicit UTC creation for deterministic testing
   print('\n2. Test Time Sources:');
   final fixedTime = FixedClock(
-    time: DateTime.fromMillisecondsSinceEpoch(0, isUtc: true), // Unix epoch in UTC
+    time: DateTime.fromMillisecondsSinceEpoch(
+      0,
+      isUtc: true,
+    ), // Unix epoch in UTC
     tick: Duration(seconds: 1),
   );
 
@@ -85,18 +91,18 @@ void main() async {
   final utcTime = utcSystemTime();
   print('System time is UTC: ${utcTime.isUtc}'); // true
   print('UTC time: $utcTime');
-  
+
   final localTime = utcTime.toLocal();
   print('Local time: $localTime');
   print('Local time is UTC: ${localTime.isUtc}'); // false
-  
+
   // Demonstrate timezone conversion pattern
   print('\nTimezone Conversion Pattern:');
   String formatTimeForUser(DateTime utcTime) {
     final local = utcTime.toLocal();
     return 'User sees: ${local.toString().split('.')[0]}';
   }
-  
+
   print(formatTimeForUser(utcTime));
   print('Business logic keeps UTC: $utcTime');
 }
