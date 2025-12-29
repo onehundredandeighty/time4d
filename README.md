@@ -62,129 +62,35 @@ final secondClock = tickingClock(utcSystemTime, unit: Duration(seconds: 1));
 Control time in your tests with tickable clocks:
 
 ```dart
-// Fixed time that only advances when you tick it
-final fixed = FixedClock(
-  time: DateTime.fromMillisecondsSinceEpoch(0, isUtc: true),
-  tick: Duration(seconds: 1),
-);
-
+final fixed = FixedClock(time: DateTime.fromMillisecondsSinceEpoch(0, isUtc: true));
 print(fixed()); // 1970-01-01 00:00:00.000Z
-fixed.tick();
+fixed.tick();   // Manually advance time
 print(fixed()); // 1970-01-01 00:00:01.000Z
-
-// Auto-advancing clock
-final auto = AutoTickingClock(
-  time: DateTime.fromMillisecondsSinceEpoch(0, isUtc: true), 
-  tick: Duration(seconds: 1),
-);
-
-print(auto()); // 1970-01-01 00:00:00.000Z  
-print(auto()); // 1970-01-01 00:00:01.000Z (auto-advanced)
 ```
 
 ### Schedulers
 
-#### Deterministic Scheduler (Testing)
-
-Perfect for testing time-dependent code:
+For deterministic testing and production scheduling:
 
 ```dart
-// Start at Unix epoch for predictable testing
+// Testing - controllable time
 final scheduler = DeterministicScheduler.epoch();
+scheduler.scheduleVoid(() => print('Task executed!'), Duration(seconds: 1));
+scheduler.tick(Duration(seconds: 1)); // Execute scheduled tasks
 
-final results = <String>[];
-
-// Schedule tasks
-scheduler.scheduleVoid(() => results.add('First'), Duration(milliseconds: 100));
-scheduler.scheduleVoid(() => results.add('Second'), Duration(milliseconds: 50));
-
-// Execute tasks by advancing time
-scheduler.tick(Duration(milliseconds: 100));
-print(results); // ['Second', 'First'] - executes in time order
-
-// Check if scheduler has pending work
-print(scheduler.isIdle()); // true
-```
-
-#### Production Scheduler
-
-For real async scheduling in production:
-
-```dart
-final scheduler = SchedulerService();
-
-// Schedule a task
-await scheduler.schedule(() async {
-  await Future.delayed(Duration(milliseconds: 100));
-  print('Async task completed!');
-  return 'result';
-}, Duration(milliseconds: 50));
-
-// Periodic tasks
-scheduler.scheduleAtFixedRate(
-  () => print('Heartbeat'),
-  Duration(seconds: 1),    // initial delay
-  Duration(seconds: 30),   // period
-);
-
-// Clean shutdown
-scheduler.shutdown();
-```
-
-### DeterministicScheduler Methods
-
-```dart
-class DeterministicScheduler implements Scheduler {
-  // Constructors
-  DeterministicScheduler([DateTime? startTime]);
-  factory DeterministicScheduler.epoch();
-  
-  // Time control
-  DateTime get currentTime;
-  void tick(Duration duration);
-  void runUntilIdle();
-  
-  // State management
-  bool isIdle();
-  void clear();
-}
+// Production - real async scheduling  
+final prodScheduler = SchedulerService();
+await prodScheduler.schedule(() async => 'result', Duration(seconds: 1));
 ```
 
 
 ## Working with UTC Times
 
-Time4d operates exclusively with UTC `DateTime` objects. All clocks return UTC times for deterministic testing and cross-platform consistency.
+Time4d operates exclusively with UTC `DateTime` objects for deterministic testing and cross-platform consistency. Convert to local time at the presentation layer:
 
 ```dart
-final clock = utcSystemTime;
-print(clock().isUtc); // true
-
-final fixed = FixedClock();
-print(fixed().isUtc); // true
-```
-
-### Converting to Local Time
-
-For user-facing displays, convert UTC times at the presentation layer:
-
-```dart
-final utcTime = utcSystemTime();
-final localTime = utcTime.toLocal();
-
-print('UTC: $utcTime');     // 2024-01-15 14:30:00.000Z
-print('Local: $localTime'); // 2024-01-15 09:30:00.000 (EST example)
-```
-
-### Architecture Pattern
-
-A clean approach is to keep business logic in UTC and convert at the edges:
-
-```dart
-// Core logic stays in UTC
-DateTime scheduleTask(Duration delay) => utcSystemTime().add(delay);
-
-// UI layer handles conversion
-String displayTime(DateTime utc) => utc.toLocal().toString();
+final utcTime = utcSystemTime(); // Always UTC
+final localTime = utcTime.toLocal(); // Convert for display
 ```
 
 ## Best Practices
@@ -198,7 +104,12 @@ String displayTime(DateTime utc) => utc.toLocal().toString();
 
 ## Examples
 
-See the [example](example/) directory for complete working examples.
+**📁 [Complete working examples](example/)** - See the `/example` folder for comprehensive demos of all features including:
+- Clock usage patterns
+- Deterministic scheduler testing
+- Production scheduler setup  
+- UTC timezone handling
+- Real-world usage scenarios
 
 ## Contributing
 
