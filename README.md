@@ -1,6 +1,7 @@
 # Time4d
 
 [![Dart](https://img.shields.io/badge/dart-3.7%2B-blue)](https://dart.dev)
+[![Pub Version](https://img.shields.io/pub/v/time4d.svg)](https://pub.dev/packages/time4d)
 [![License](https://img.shields.io/badge/license-Apache2-green)](LICENSE)
 
 Time abstraction and scheduler for Dart. A port of the [time4k](https://github.com/fork-handles/forkhandles/tree/trunk/time4k) Kotlin library, providing controllable clocks and deterministic scheduling for testing.
